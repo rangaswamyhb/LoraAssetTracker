@@ -1,0 +1,14 @@
+gpio-board.c:36:6:GpioMcuInit	64	static
+gpio-board.c:130:6:GpioMcuSetContext	0	static
+gpio-board.c:135:6:GpioMcuSetInterrupt	40	static
+gpio-board.c:239:6:GpioMcuRemoveInterrupt	40	static
+gpio-board.c:261:6:GpioMcuWrite	0	static
+gpio-board.c:285:6:GpioMcuToggle	0	static
+gpio-board.c:310:10:GpioMcuRead	8	static
+gpio-board.c:336:6:EXTI0_IRQHandler	0	static
+gpio-board.c:341:6:EXTI1_IRQHandler	0	static
+gpio-board.c:346:6:EXTI2_IRQHandler	0	static
+gpio-board.c:351:6:EXTI3_IRQHandler	0	static
+gpio-board.c:361:6:EXTI9_5_IRQHandler	8	static
+gpio-board.c:370:6:EXTI15_10_IRQHandler	8	static
+gpio-board.c:380:6:HAL_GPIO_EXTI_Callback	0	static

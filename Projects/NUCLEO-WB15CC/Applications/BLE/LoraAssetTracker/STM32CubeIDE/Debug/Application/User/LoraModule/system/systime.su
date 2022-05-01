@@ -1,0 +1,9 @@
+systime.c:76:11:SysTimeAdd	16	static
+systime.c:90:11:SysTimeSub	16	static
+systime.c:104:6:SysTimeSet	24	static
+systime.c:118:11:SysTimeGet	24	static
+systime.c:136:11:SysTimeGetMcuTime	16	static
+systime.c:145:13:SysTimeToMs	24	static
+systime.c:159:11:SysTimeFromMs	24	static
+systime.c:172:10:SysTimeMkTime	32	static
+systime.c:203:6:SysTimeLocalTime	32	static

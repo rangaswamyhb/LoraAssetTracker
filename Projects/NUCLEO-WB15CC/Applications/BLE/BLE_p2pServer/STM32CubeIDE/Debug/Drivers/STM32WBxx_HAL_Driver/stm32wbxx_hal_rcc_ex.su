@@ -1,0 +1,16 @@
+stm32wbxx_hal_rcc_ex.c:147:19:HAL_RCCEx_PeriphCLKConfig	24	static
+stm32wbxx_hal_rcc_ex.c:442:6:HAL_RCCEx_GetPeriphCLKConfig	0	static
+stm32wbxx_hal_rcc_ex.c:553:10:HAL_RCCEx_GetPeriphCLKFreq	16	static
+stm32wbxx_hal_rcc_ex.c:1134:10:HAL_RCCEx_GetRngCLKSource	0	static
+stm32wbxx_hal_rcc_ex.c:1275:6:HAL_RCCEx_WakeUpStopCLKConfig	8	static
+stm32wbxx_hal_rcc_ex.c:1289:6:HAL_RCCEx_EnableLSECSS	0	static
+stm32wbxx_hal_rcc_ex.c:1299:6:HAL_RCCEx_DisableLSECSS	0	static
+stm32wbxx_hal_rcc_ex.c:1312:6:HAL_RCCEx_EnableLSECSS_IT	0	static
+stm32wbxx_hal_rcc_ex.c:1348:13:HAL_RCCEx_LSECSS_Callback	0	static
+stm32wbxx_hal_rcc_ex.c:1331:6:HAL_RCCEx_LSECSS_IRQHandler	8	static
+stm32wbxx_hal_rcc_ex.c:1369:6:HAL_RCCEx_LSCOConfig	48	static
+stm32wbxx_hal_rcc_ex.c:1450:6:HAL_RCCEx_EnableLSCO	40	static
+stm32wbxx_hal_rcc_ex.c:1492:6:HAL_RCCEx_DisableLSCO	8	static
+stm32wbxx_hal_rcc_ex.c:1523:6:HAL_RCCEx_EnableMSIPLLMode	0	static
+stm32wbxx_hal_rcc_ex.c:1533:6:HAL_RCCEx_DisableMSIPLLMode	0	static
+stm32wbxx_hal_rcc_ex.c:1549:19:HAL_RCCEx_TrimOsc	8	static

@@ -1,0 +1,4 @@
+lpm-board.c:33:6:LpmSetOffMode	24	static
+lpm-board.c:59:6:LpmSetStopMode	24	static
+lpm-board.c:85:6:LpmEnterLowPower	8	static
+lpm-board.c:117:14:LpmGetMode	16	static

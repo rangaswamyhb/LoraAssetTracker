@@ -1,0 +1,13 @@
+lora_nxp_wan.c:1047:6:OnMacProcessNotify	0	static
+lora_nxp_wan.c:365:13:PrepareTxFrame	24	static
+lora_nxp_wan.c:444:13:SendFrame	48	static
+lora_nxp_wan.c:320:13:JoinNetwork	72	static
+lora_nxp_wan.c:515:13:OnTxNextPacketTimerEvent	48	static
+lora_nxp_wan.c:1025:13:MlmeIndication	8	static
+lora_nxp_wan.c:964:13:MlmeConfirm	48	static
+lora_nxp_wan.c:293:6:mymyPrintHexBuffer	24	static
+lora_nxp_wan.c:673:13:McpsIndication	64	static
+lora_nxp_wan.c:562:13:McpsConfirm	96	static
+lora_nxp_wan.c:1058:5:lorawan_init	16	static
+lora_nxp_wan.c:1107:6:lorawan_process	48	static
+lora_nxp_wan.c:1394:5:lora_wan	136	static

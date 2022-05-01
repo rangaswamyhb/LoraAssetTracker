@@ -1,0 +1,7 @@
+lr1110_gpio.c:31:6:GpioInit	4	static
+lr1110_gpio.c:36:6:GpioSetContext	0	static
+lr1110_gpio.c:41:6:GpioSetInterrupt	0	static
+lr1110_gpio.c:46:6:GpioRemoveInterrupt	0	static
+lr1110_gpio.c:51:6:GpioWrite	0	static
+lr1110_gpio.c:58:6:GpioToggle	0	static
+lr1110_gpio.c:65:10:GpioRead	8	static

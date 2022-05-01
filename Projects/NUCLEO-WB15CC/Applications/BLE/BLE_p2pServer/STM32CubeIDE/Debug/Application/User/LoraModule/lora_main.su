@@ -1,0 +1,8 @@
+lora_main.c:537:6:OnTxDone	8	static
+lora_main.c:561:6:OnTxTimeout	8	static
+lora_main.c:568:6:OnRxTimeout	8	static
+lora_main.c:575:6:OnRxError	8	static
+lora_main.c:544:6:OnRxDone	32	static
+lora_main.c:164:6:lorapingpong_init	72	static
+lora_main.c:228:6:lorapingpong_process	32	static
+lora_main.c:354:5:lora_ping_pong	80	static

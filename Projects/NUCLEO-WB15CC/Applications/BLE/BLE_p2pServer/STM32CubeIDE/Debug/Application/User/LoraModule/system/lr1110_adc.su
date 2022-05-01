@@ -1,0 +1,3 @@
+lr1110_adc.c:31:6:AdcInit	8	static
+lr1110_adc.c:42:6:AdcDeInit	0	static
+lr1110_adc.c:47:10:AdcReadChannel	0	static

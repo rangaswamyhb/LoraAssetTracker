@@ -55,9 +55,11 @@ extern "C" {
 
 #undef FALSE
 #define FALSE                   0U
+#define false                   0U
 
 #undef TRUE
 #define TRUE                    (!0U)
+#define true					TRUE
 
   /* -------------------------------- *
    *  Critical Section definition     *

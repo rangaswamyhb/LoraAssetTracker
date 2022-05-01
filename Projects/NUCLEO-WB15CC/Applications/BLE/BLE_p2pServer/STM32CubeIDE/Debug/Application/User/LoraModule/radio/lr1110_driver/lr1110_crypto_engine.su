@@ -1,0 +1,13 @@
+lr1110_crypto_engine.c:100:6:lr1110_crypto_select	32	static
+lr1110_crypto_engine.c:112:6:lr1110_crypto_set_key	48	static
+lr1110_crypto_engine.c:133:6:lr1110_crypto_derive_and_store_key	48	static
+lr1110_crypto_engine.c:156:6:lr1110_crypto_process_join_accept	136	static
+lr1110_crypto_engine.c:192:6:lr1110_crypto_compute_aes_cmac	312	static
+lr1110_crypto_engine.c:221:6:lr1110_crypto_verify_aes_cmac	312	static
+lr1110_crypto_engine.c:247:6:lr1110_crypto_aes_encrypt_01	560	static
+lr1110_crypto_engine.c:273:6:lr1110_crypto_aes_encrypt	560	static
+lr1110_crypto_engine.c:299:6:lr1110_crypto_aes_decrypt	560	static
+lr1110_crypto_engine.c:325:6:lr1110_crypto_store_to_flash	32	static
+lr1110_crypto_engine.c:338:6:lr1110_crypto_restore_from_flash	32	static
+lr1110_crypto_engine.c:352:6:lr1110_crypto_set_parameter	40	static
+lr1110_crypto_engine.c:373:6:lr1110_crypto_get_parameter	40	static

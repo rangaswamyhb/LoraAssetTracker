@@ -1,0 +1,12 @@
+board.c:100:6:BoardCriticalSectionBegin	0	static,ignoring_inline_asm
+board.c:106:6:BoardCriticalSectionEnd	0	static,ignoring_inline_asm
+board.c:111:6:BoardInitPeriph	0	static
+board.c:116:6:BoardInitMcu	16	static
+board.c:215:6:BoardResetMcu	0	static,ignoring_inline_asm
+board.c:223:6:BoardDeInitMcu	0	static
+board.c:244:10:BoardGetRandomSeed	0	static
+board.c:249:6:BoardGetUniqueId	4	static
+board.c:559:6:LpmEnterStopMode	0	static,ignoring_inline_asm
+board.c:574:6:LpmExitStopMode	16	static,ignoring_inline_asm
+board.c:590:6:LpmEnterSleepMode	0	static
+board.c:604:6:BoardLowPowerHandler	8	static,ignoring_inline_asm

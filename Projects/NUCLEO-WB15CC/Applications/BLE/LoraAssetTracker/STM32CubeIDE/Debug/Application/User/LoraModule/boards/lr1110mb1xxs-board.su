@@ -1,0 +1,16 @@
+lr1110mb1xxs-board.c:52:6:lr1110_board_init_io	24	static
+lr1110mb1xxs-board.c:63:6:lr1110_board_deinit_io	0	static
+lr1110mb1xxs-board.c:73:6:lr1110_board_init_dbg_io	0	static
+lr1110mb1xxs-board.c:81:6:lr1110_board_set_rf_tx_power	0	static
+lr1110mb1xxs-board.c:106:6:lr1110_board_lna_on	0	static
+lr1110mb1xxs-board.c:111:6:lr1110_board_lna_off	0	static
+lr1110mb1xxs-board.c:116:10:lr1110_board_get_tcxo_wakeup_time	0	static
+lr1110mb1xxs-board.c:121:10:lr1110_get_dio_1_pin_state	0	static
+lr1110mb1xxs-board.c:126:6:lr1110_board_init	56	static
+lr1110mb1xxs-board.c:284:6:lr1110_hal_reset	8	static
+lr1110mb1xxs-board.c:292:21:lr1110_hal_wakeup	8	static
+lr1110mb1xxs-board.c:193:21:lr1110_hal_write	40	static
+lr1110mb1xxs-board.c:223:21:lr1110_hal_read	32	static
+lr1110mb1xxs-board.c:256:21:lr1110_hal_write_read	32	static
+lr1110mb1xxs-board.c:318:29:lr1110_hal_get_operating_mode	0	static
+lr1110mb1xxs-board.c:323:6:lr1110_hal_set_operating_mode	0	static

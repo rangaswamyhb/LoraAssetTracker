@@ -49,7 +49,10 @@ _Min_Stack_Size = 0x1000 ;   /* required amount of stack */
 MEMORY
 {
 FLASH (rx)                 : ORIGIN = 0x08000000, LENGTH = 95K
-RAM1 (xrw)                 : ORIGIN = 0x20000008, LENGTH = 0x2FF8
+RAM1 (xrw)                 : ORIGIN = 0x20000008, LENGTH = 0x2F94
+
+NOINIT (rwx) 			   : ORIGIN = 0x20000008 + 0x2F95, LENGTH = 0x64
+ 
 RAM_SHARED (xrw)           : ORIGIN = 0x20030000, LENGTH = 10K
 }
 
@@ -161,6 +164,12 @@ SECTIONS
     . = . + _Min_Stack_Size;
     . = ALIGN(8);
   } >RAM1
+  
+  .noinit (NOLOAD):
+  {
+    /* place all symbols in input sections that start with .noinit */
+    KEEP(*(*.noinit*))
+  } > NOINIT
 
   /* Remove information from the standard libraries */
   /DISCARD/ :

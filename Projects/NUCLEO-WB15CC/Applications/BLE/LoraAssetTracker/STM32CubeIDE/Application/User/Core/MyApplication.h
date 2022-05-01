@@ -14,8 +14,8 @@
 #define MAX_BLE_TXRX_DATA   		(255u)
 #define MAX_BLE_ADV_DATA    		(10u)
 
-#define MAX_LORA_WAN_TIMEOUT 		(180*1000*1000/CFG_TS_TICK_VAL) /**< 100s */
-#define MAX_LORA_PING_PONG_TIMEOUT 	(60*1000*1000/CFG_TS_TICK_VAL) /**< 60s */
+#define MAX_LORA_WAN_TIMEOUT 		(180*1000/CFG_TS_TICK_VAL) /**< 100s */
+#define MAX_LORA_PING_PONG_TIMEOUT 	(60*1000/CFG_TS_TICK_VAL) /**< 60s */
 
 #define DEFAULT_LORA_WAN_TIME		(1) /**< In Min */
 
@@ -33,6 +33,8 @@ typedef enum
 {
 	BLE_RX_FRAME_MSG_TYPE_UNKOWN,
 	BLE_RX_FRAME_MSG_TYPE_LORA_MODE = 0x01,
+	BLE_RX_FRAME_MSG_TYPE_TIME_SYNC,
+	BLE_RX_FRAME_MSG_TYPE_SLAVE_MASTER_SELECTOR,
 	BLE_RX_FRAME_MSG_TYPE_MAX
 }eBleRxFrameMsgType_t;
 
@@ -161,8 +163,11 @@ void App_ReqAdvUpdateData(void);
 
 
 
-
 void App_SeLoraCommInterval(uint16_t u16TimeInMin);
 uint16_t App_GetLoraCommInterval(void);
+
+void App_vSetDeviceIsMaster(uint8_t u8Bool);
+uint8_t App_u8GetDeviceIsMaster(void);
+
 
 #endif /* APPLICATION_USER_CORE_MYAPPLICATION_H_ */

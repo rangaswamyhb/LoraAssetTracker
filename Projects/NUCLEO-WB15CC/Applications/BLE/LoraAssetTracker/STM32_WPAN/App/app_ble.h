@@ -80,6 +80,8 @@ void APP_BLE_Key_Button3_Action(void);
 
 void Adv_UpdateData(void);
 
+void Ble_GetMacId(uint8_t * pu8MacId);
+
 /* USER CODE END EF */
 
 #ifdef __cplusplus

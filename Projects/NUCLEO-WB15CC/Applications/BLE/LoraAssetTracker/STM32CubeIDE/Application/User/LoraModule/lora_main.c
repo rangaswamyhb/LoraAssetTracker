@@ -112,9 +112,10 @@ typedef enum
     RX_ERROR,
     TX,
     TX_TIMEOUT,
+	FORCE_TX,
 }States_t;
 
-#define RX_TIMEOUT_VALUE                            1500
+#define RX_TIMEOUT_VALUE                            1000//3000//1100
 #define BUFFER_SIZE                                 10 // Define the payload size here
 
 const uint8_t PingMsg[] = "PING";
@@ -161,6 +162,29 @@ void OnRxError( void );
 
 bool isMaster = true;
 
+/*!
+ * Timer to handle the application data transmission duty cycle
+ */
+static TimerEvent_t PingPongTxNextPacketTimer;
+#define PING_PONG_TX_PACKET_TIME    4000
+
+uint32_t u32RxWindowTimeout = 0;
+
+
+static void OnPingPongTxNextPacketTimerEvent( void* context )
+{
+	TimerStop( &PingPongTxNextPacketTimer );
+	TimerSetValue( &PingPongTxNextPacketTimer, PING_PONG_TX_PACKET_TIME );
+
+	TimerStart( &PingPongTxNextPacketTimer );
+
+	if(State == LOWPOWER)
+	{
+		State = FORCE_TX;
+	}
+}
+
+
 void lorapingpong_init(void)
 {
     uint8_t i;
@@ -192,7 +216,7 @@ void lorapingpong_init(void)
     Radio.SetTxConfig( MODEM_LORA, TX_OUTPUT_POWER, 0, LORA_BANDWIDTH,
                                    LORA_SPREADING_FACTOR, LORA_CODINGRATE,
                                    LORA_PREAMBLE_LENGTH, LORA_FIX_LENGTH_PAYLOAD_ON,
-                                   true, 0, 0, LORA_IQ_INVERSION_ON, 3000 );
+                                   true, 0, 0, LORA_IQ_INVERSION_ON, 1000 );
 
     Radio.SetRxConfig( MODEM_LORA, LORA_BANDWIDTH, LORA_SPREADING_FACTOR,
                                    LORA_CODINGRATE, 0, LORA_PREAMBLE_LENGTH,
@@ -220,7 +244,27 @@ void lorapingpong_init(void)
 #endif
 
     printf("Radio Config\r\n");
-    Radio.Rx( RX_TIMEOUT_VALUE );
+
+
+
+    if(App_u8GetDeviceIsMaster())
+    {
+    	Radio.Rx( RX_TIMEOUT_VALUE + RX_TIMEOUT_VALUE );
+    	u32RxWindowTimeout =  5 * RX_TIMEOUT_VALUE;
+    	printf("\r\n\r\n########### Master Mode #############\r\n");
+    }
+    else
+    {
+    	State = FORCE_TX;
+    	u32RxWindowTimeout = RX_TIMEOUT_VALUE + 500;
+
+	    TimerInit( &PingPongTxNextPacketTimer, OnPingPongTxNextPacketTimerEvent );
+		TimerSetValue( &PingPongTxNextPacketTimer, PING_PONG_TX_PACKET_TIME );
+
+		TimerStart( &PingPongTxNextPacketTimer );
+
+		printf("\r\n\r\n########### Slave Mode #############\r\n");
+    }
 
     printf("Radio Rx\r\n");
 }
@@ -231,107 +275,124 @@ void lorapingpong_process(void)
     switch( State )
     {
     case RX:
+    {
     	printf("RX State:\r\n");
     	printf("Rx RSSI: %d, 0x%x,  SNR value: %d, 0x%x\r\n", RssiValue, RssiValue, SnrValue, SnrValue);
-        if( isMaster == true )
-        {
-            if( BufferSize > 0 )
-            {
-                if( strncmp( ( const char* )Buffer, ( const char* )PongMsg, 4 ) == 0 )
-                {
-                    // Indicates on a LED that the received frame is a PONG
-                	printf("PONG string matches\r\n");
-                    // Send the next PING frame
-                    Buffer[0] = 'P';
-                    Buffer[1] = 'I';
-                    Buffer[2] = 'N';
-                    Buffer[3] = 'G';
-                    // We fill the buffer with numbers for the payload
-                    for( i = 4; i < BufferSize; i++ )
-                    {
-                        Buffer[i] = i - 4;
-                    }
-                    DelayMs( 1 );
-                    Radio.Send( Buffer, BufferSize );
-                }
-                else if( strncmp( ( const char* )Buffer, ( const char* )PingMsg, 4 ) == 0 )
-                { // A master already exists then become a slave
-                    isMaster = false;
-                    Radio.Rx( RX_TIMEOUT_VALUE );
-                }
-                else // valid reception but neither a PING or a PONG message
-                {    // Set device as master ans start again
-                    isMaster = true;
-                    Radio.Rx( RX_TIMEOUT_VALUE );
-                }
-            }
-        }
-        else
-        {
-            if( BufferSize > 0 )
-            {
-                if( strncmp( ( const char* )Buffer, ( const char* )PingMsg, 4 ) == 0 )
-                {
-                    // Indicates on a LED that the received frame is a PING
-                	printf("Ping string Match\r\n");
 
-                    // Send the reply to the PONG string
-                    Buffer[0] = 'P';
-                    Buffer[1] = 'O';
-                    Buffer[2] = 'N';
-                    Buffer[3] = 'G';
-                    // We fill the buffer with numbers for the payload
-                    for( i = 4; i < BufferSize; i++ )
-                    {
-                        Buffer[i] = i - 4;
-                    }
-                    DelayMs( 1 );
-                    Radio.Send( Buffer, BufferSize );
-                }
-                else // valid reception but not a PING as expected
-                {    // Set device as master and start again
-                    isMaster = true;
-                    Radio.Rx( RX_TIMEOUT_VALUE );
-                }
-            }
-        }
+    	if(App_u8GetDeviceIsMaster())
+    	{
+    		if(BufferSize > 0)
+    		{
+				if( strncmp( ( const char* )Buffer, ( const char* )PingMsg, 4 ) == 0 )
+				{
+					// Indicates on a LED that the received frame is a PING
+					printf("Ping string Match\r\n");
+
+					// Send the reply to the PONG string
+					Buffer[0] = 'P';
+					Buffer[1] = 'O';
+					Buffer[2] = 'N';
+					Buffer[3] = 'G';
+					// We fill the buffer with numbers for the payload
+					for( i = 4; i < BufferSize; i++ )
+					{
+						Buffer[i] = i - 4;
+					}
+					DelayMs( 1 );
+					Radio.Send( Buffer, BufferSize );
+					printf("Sending Pong....\r\n");
+				}
+    		}
+    	}
+    	else
+    	{
+    		if(BufferSize > 0)
+    		{
+    			if( strncmp( ( const char* )Buffer, ( const char* )PongMsg, 4 ) == 0 )
+				{
+					printf("PONG string matches\r\n");
+				}
+    		}
+    	}
+
         State = LOWPOWER;
         break;
+    }
+
     case TX:
+    {
         // Indicates on a LED that we have sent a PING [Master]
         // Indicates on a LED that we have sent a PONG [Slave]
     	printf("TX State\r\n");
-        Radio.Rx( RX_TIMEOUT_VALUE );
+    	Radio.SetRxConfig( MODEM_LORA, LORA_BANDWIDTH, LORA_SPREADING_FACTOR,
+    	        	                                   LORA_CODINGRATE, 0, LORA_PREAMBLE_LENGTH,
+    	        	                                   LORA_SYMBOL_TIMEOUT, LORA_FIX_LENGTH_PAYLOAD_ON,
+    	        	                                   0, true, 0, 0, LORA_IQ_INVERSION_ON, true );
+        Radio.Rx( u32RxWindowTimeout );
         State = LOWPOWER;
         break;
+    }
+
     case RX_TIMEOUT:
     case RX_ERROR:
+    {
     	printf("RX_TIMEOUT State\r\n");
-        if( isMaster == true )
-        {
-            // Send the next PING frame
-            Buffer[0] = 'P';
-            Buffer[1] = 'I';
-            Buffer[2] = 'N';
-            Buffer[3] = 'G';
-            for( i = 4; i < BufferSize; i++ )
-            {
-                Buffer[i] = i - 4;
-            }
-            DelayMs( 1 );
-            Radio.Send( Buffer, BufferSize );
-        }
-        else
-        {
-            Radio.Rx( RX_TIMEOUT_VALUE );
-        }
+    	if( App_u8GetDeviceIsMaster() )
+    	{
+    		Radio.SetRxConfig( MODEM_LORA, LORA_BANDWIDTH, LORA_SPREADING_FACTOR,
+    		    	        	                                   LORA_CODINGRATE, 0, LORA_PREAMBLE_LENGTH,
+    		    	        	                                   LORA_SYMBOL_TIMEOUT, LORA_FIX_LENGTH_PAYLOAD_ON,
+    		    	        	                                   0, true, 0, 0, LORA_IQ_INVERSION_ON, true );
+    		Radio.Rx( u32RxWindowTimeout );
+    	}
+
         State = LOWPOWER;
         break;
+    }
+
     case TX_TIMEOUT:
-        Radio.Rx( RX_TIMEOUT_VALUE );
-        printf("TX_TIMEOUT\r\n");
+    {
+    	printf("TX_TIMEOUT\r\n");
+    	if(App_u8GetDeviceIsMaster())
+    	{
+    		Radio.SetRxConfig( MODEM_LORA, LORA_BANDWIDTH, LORA_SPREADING_FACTOR,
+    		    	        	                                   LORA_CODINGRATE, 0, LORA_PREAMBLE_LENGTH,
+    		    	        	                                   LORA_SYMBOL_TIMEOUT, LORA_FIX_LENGTH_PAYLOAD_ON,
+    		    	        	                                   0, true, 0, 0, LORA_IQ_INVERSION_ON, true );
+    		Radio.Rx( u32RxWindowTimeout );
+    	}
+    	else
+    	{
+    		Radio.SetRxConfig( MODEM_LORA, LORA_BANDWIDTH, LORA_SPREADING_FACTOR,
+    		    	        	                                   LORA_CODINGRATE, 0, LORA_PREAMBLE_LENGTH,
+    		    	        	                                   LORA_SYMBOL_TIMEOUT, LORA_FIX_LENGTH_PAYLOAD_ON,
+    		    	        	                                   0, true, 0, 0, LORA_IQ_INVERSION_ON, true );
+    		 Radio.Rx( u32RxWindowTimeout );
+    	}
         State = LOWPOWER;
         break;
+    }
+
+    case FORCE_TX:
+    {
+    	printf("## FORCE_TX ##\r\n");
+    	printf("Sending PING\r\n");
+		// Send the next PING frame
+		Buffer[0] = 'P';
+		Buffer[1] = 'I';
+		Buffer[2] = 'N';
+		Buffer[3] = 'G';
+		// We fill the buffer with numbers for the payload
+		for( i = 4; i < BufferSize; i++ )
+		{
+			Buffer[i] = i - 4;
+		}
+		DelayMs( 1 );
+		Radio.Send( Buffer, BufferSize );
+		State = LOWPOWER;
+    	break;
+    }
+
     case LOWPOWER:
     default:
         // Set low power
@@ -411,7 +472,16 @@ int lora_ping_pong( void )
 #endif
 
     printf("Radio Config\r\n");
-    Radio.Rx( RX_TIMEOUT_VALUE );
+
+    if(App_u8GetDeviceIsMaster())
+    {
+    	Radio.Rx( RX_TIMEOUT_VALUE + RX_TIMEOUT_VALUE );
+    }
+    else
+    {
+    	Radio.Rx( RX_TIMEOUT_VALUE );
+    }
+
 
     printf("Radio Rx\r\n");
 
@@ -420,6 +490,7 @@ int lora_ping_pong( void )
         switch( State )
         {
         case RX:
+        {
             if( isMaster == true )
             {
                 if( BufferSize > 0 )
@@ -449,6 +520,10 @@ int lora_ping_pong( void )
                     else // valid reception but neither a PING or a PONG message
                     {    // Set device as master ans start again
                         isMaster = true;
+//                        Radio.SetRxConfig( MODEM_LORA, LORA_BANDWIDTH, LORA_SPREADING_FACTOR,
+//                                	                                   LORA_CODINGRATE, 0, LORA_PREAMBLE_LENGTH,
+//                                	                                   LORA_SYMBOL_TIMEOUT, LORA_FIX_LENGTH_PAYLOAD_ON,
+//                                	                                   0, true, 0, 0, LORA_IQ_INVERSION_ON, true );
                         Radio.Rx( RX_TIMEOUT_VALUE );
                     }
                 }
@@ -477,22 +552,36 @@ int lora_ping_pong( void )
                     }
                     else // valid reception but not a PING as expected
                     {    // Set device as master and start again
-                        isMaster = true;
+//                        isMaster = true;
+//                        Radio.SetRxConfig( MODEM_LORA, LORA_BANDWIDTH, LORA_SPREADING_FACTOR,
+//                                	                                   LORA_CODINGRATE, 0, LORA_PREAMBLE_LENGTH,
+//                                	                                   LORA_SYMBOL_TIMEOUT, LORA_FIX_LENGTH_PAYLOAD_ON,
+//                                	                                   0, true, 0, 0, LORA_IQ_INVERSION_ON, true );
                         Radio.Rx( RX_TIMEOUT_VALUE );
                     }
                 }
             }
             State = LOWPOWER;
             break;
+        }
+
         case TX:
+        {
             // Indicates on a LED that we have sent a PING [Master]
             // Indicates on a LED that we have sent a PONG [Slave]
         	printf("TX State\r\n");
+//        	Radio.SetRxConfig( MODEM_LORA, LORA_BANDWIDTH, LORA_SPREADING_FACTOR,
+//        	                                   LORA_CODINGRATE, 0, LORA_PREAMBLE_LENGTH,
+//        	                                   LORA_SYMBOL_TIMEOUT, LORA_FIX_LENGTH_PAYLOAD_ON,
+//        	                                   0, true, 0, 0, LORA_IQ_INVERSION_ON, true );
             Radio.Rx( RX_TIMEOUT_VALUE );
             State = LOWPOWER;
             break;
+        }
+
         case RX_TIMEOUT:
         case RX_ERROR:
+        {
         	printf("RX_TIMEOUT State\r\n");
             if( isMaster == true )
             {
@@ -510,10 +599,16 @@ int lora_ping_pong( void )
             }
             else
             {
+//            	Radio.SetRxConfig( MODEM_LORA, LORA_BANDWIDTH, LORA_SPREADING_FACTOR,
+//            	        	                                   LORA_CODINGRATE, 0, LORA_PREAMBLE_LENGTH,
+//            	        	                                   LORA_SYMBOL_TIMEOUT, LORA_FIX_LENGTH_PAYLOAD_ON,
+//            	        	                                   0, true, 0, 0, LORA_IQ_INVERSION_ON, true );
                 Radio.Rx( RX_TIMEOUT_VALUE );
             }
             State = LOWPOWER;
             break;
+        }
+
         case TX_TIMEOUT:
             Radio.Rx( RX_TIMEOUT_VALUE );
             printf("TX_TIMEOUT\r\n");

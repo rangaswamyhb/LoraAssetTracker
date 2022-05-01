@@ -253,7 +253,8 @@ uint8_t ad_data[19] = {
  * Advertising Data
  */
 #if (P2P_SERVER1 != 0)
-static const char local_name[] = { AD_TYPE_COMPLETE_LOCAL_NAME ,'L','O','R','A','_','P','2'};
+#define BLE_NAME "FrilTag"
+static char local_name[14] = { AD_TYPE_COMPLETE_LOCAL_NAME ,'F','r','i','l','T','a','g'};
 uint8_t manuf_data[14] = {
     sizeof(manuf_data)-1, AD_TYPE_MANUFACTURER_SPECIFIC_DATA,
     0x01/*SKD version */,
@@ -1060,6 +1061,21 @@ static void Adv_Request(APP_BLE_ConnStatus_t New_Status)
     }
 
     BleApplicationContext.Device_Connection_Status = New_Status;
+
+    /* Local Name */
+    uint8_t * pu8MacId = BleGetBdAddress();
+    uint8_t au8String[10] = {0, };
+
+    sprintf(au8String, "%X%X%X%X", ((pu8MacId[1] & 0xF0) >> 4),
+        		(pu8MacId[1] & 0x0F),
+    			((pu8MacId[0] & 0xF0) >> 4),
+    			(pu8MacId[0] & 0x0F));
+
+    local_name[8] = au8String[0];
+    local_name[9] = au8String[1];
+    local_name[10] = au8String[2];
+    local_name[11] = au8String[3];
+
     /* Start Fast or Low Power Advertising */
     ret = aci_gap_set_discoverable(
         ADV_IND,
@@ -1067,7 +1083,7 @@ static void Adv_Request(APP_BLE_ConnStatus_t New_Status)
         Max_Inter,
         CFG_BLE_ADDRESS_TYPE,
         NO_WHITE_LIST_USE, /* use white list */
-        sizeof(local_name),
+        12,//sizeof(local_name),
         (uint8_t*) &local_name,
         BleApplicationContext.BleApplicationContext_legacy.advtServUUIDlen,
         BleApplicationContext.BleApplicationContext_legacy.advtServUUID,
@@ -1209,6 +1225,13 @@ const uint8_t* BleGetBdAddress( void )
 }
 
 /* USER CODE BEGIN FD_LOCAL_FUNCTION */
+
+
+void Ble_GetMacId(uint8_t * pu8MacId)
+{
+
+	memcpy(pu8MacId, BleGetBdAddress(), 6);
+}
 
 /* USER CODE END FD_LOCAL_FUNCTION */
 

@@ -255,11 +255,16 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
+  uint8_t au8MacId[6] = {0, };
+  Ble_GetMacId(au8MacId);
+
   printf("\r\n\r\n\r\n");
   printf("===================================================\r\n");
   printf("||       Lora Asset Tracker v%d.%d.%d                ||\r\n",
 		  FW_VERSION_MAJOR, FW_VERSION_MINOR, FW_VERSION_PATCH);
   printf("===================================================\r\n\r\n");
+  printf("BLE Mac ID: %02X:%02X:%02X:%02X:%02X:%02X\r\n",
+		  au8MacId[5], au8MacId[4], au8MacId[3], au8MacId[2], au8MacId[1], au8MacId[0]);
 
   /* Lorawan Init and Process Task create */
   App_vLoraWanInitTaskCreate();

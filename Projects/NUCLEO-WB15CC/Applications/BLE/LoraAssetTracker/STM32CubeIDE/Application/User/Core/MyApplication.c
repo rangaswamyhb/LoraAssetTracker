@@ -16,7 +16,12 @@
 
 
 
-eLoraModuleSelector_t eLoraModuleSelector = LORA_MODULE_WAN_NETWORK;
+//__attribute__((section(".noinit"))) eLoraModuleSelector_t eLoraModuleSelector = LORA_MODULE_WAN_NETWORK;
+//__attribute__((section(".noinit"))) uint32_t	loraMasterSelector = false;
+
+eLoraModuleSelector_t eLoraModuleSelector = LORA_MODULE_PING_PONG;//LORA_MODULE_WAN_NETWORK;
+uint32_t	loraMasterSelector = FALSE;
+
 sBleData_t sBleRxData;
 uBleAdvData_t g_uBleAdvData;
 
@@ -156,7 +161,14 @@ void App_vBleAdvReqTask(void)
 {
 	if(App_u8GetBleConnectionStatus() != TRUE)
 	{
+		printf("Adv the Ping Pong Data\r\n");
 		Adv_Request(1);
+	}
+	else
+	{
+		printf("Notfy the Ping Pong Data\r\n");
+		App_vPrepareBleAdvData();
+		P2PS_STM_App_Update_Char_With_Len(P2P_NOTIFY_CHAR_UUID, (uint8_t *) &g_uBleAdvData, sizeof(uBleAdvData_t));
 	}
 }
 
@@ -308,6 +320,26 @@ void App_vBleReceiveProcessData(uint8_t * pu8Data, uint8_t u8Len)
 	}
 	break;
 
+	case BLE_RX_FRAME_MSG_TYPE_TIME_SYNC:
+	{
+		break;
+	}
+
+	case BLE_RX_FRAME_MSG_TYPE_SLAVE_MASTER_SELECTOR:
+	{
+		printf("BLE_RX_FRAME_MSG_TYPE_SLAVE_MASTER_SELECTOR\r\n");
+		if(sBleRxData.au8Payload[1] == 0x01)
+		{
+			App_vSetDeviceIsMaster(FALSE);
+		}
+		else if(sBleRxData.au8Payload[1] == 0x02)
+		{
+			App_vSetDeviceIsMaster(TRUE);
+		}
+
+		break;
+	}
+
 	case 'N':
 	{
 		App_vNotifyTaskRun();
@@ -395,7 +427,19 @@ uint8_t App_u8GetBleConnectionStatus(void)
 
 void App_ReqAdvUpdateData(void)
 {
-	Adv_UpdateData();
+//	Adv_UpdateData();
+
+	if(App_u8GetBleConnectionStatus() != TRUE)
+	{
+		printf("Adv the Ping Pong Data\r\n");
+		Adv_UpdateData();
+	}
+	else
+	{
+		printf("Notfy the Ping Pong Data\r\n");
+		App_vPrepareBleAdvData();
+		P2PS_STM_App_Update_Char_With_Len(P2P_NOTIFY_CHAR_UUID, (uint8_t *) &g_uBleAdvData, sizeof(uBleAdvData_t));
+	}
 }
 
 
@@ -423,6 +467,33 @@ void App_SeLoraCommInterval(uint16_t u16TimeInMin)
 uint16_t App_GetLoraCommInterval(void)
 {
 	return u16LoraCommTimeInterval;
+}
+
+
+
+
+
+
+
+
+
+
+/* Lora Master / Smave Selector */
+void App_vSetDeviceIsMaster(uint8_t u8Bool)
+{
+	if(u8Bool)
+	{
+		loraMasterSelector = TRUE;
+	}
+	else
+	{
+		loraMasterSelector = FALSE;
+	}
+}
+
+uint8_t App_u8GetDeviceIsMaster(void)
+{
+	return loraMasterSelector;
 }
 
 
