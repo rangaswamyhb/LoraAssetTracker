@@ -13,6 +13,7 @@
 #include "p2p_server_app.h"
 #include "stm32_seq.h"
 #include "app_conf.h"
+#include "lr1110_timer.h"
 
 
 
@@ -30,6 +31,12 @@ uint8_t u8BleConnectionStatus = 0;;
 
 uint8_t u8LoraPingPongTimerId = 0;
 uint8_t u8LoraWanTimerId = 0;
+
+/**
+  * @brief Timer to handle the application LoraPingPongTimerId
+  */
+static TimerEvent_t LoraPingPongTimerId;
+static TimerEvent_t LoraWanTimerId;
 
 uint8_t u8LoraPingPongInProgress = 0;
 uint8_t u8LoraWanInProgress = 0;
@@ -64,57 +71,79 @@ void App_vNotifyDataTask(void)
 
 
 uint32_t u32LoraPingPongOneMinTimerCounter = 0;
+uint32_t u32LoraWanTimerCounter = 0;
+
 void App_vLoraPingPongTimerHandler(void)
 {
 	u32LoraPingPongOneMinTimerCounter++;
-	if(u32LoraPingPongOneMinTimerCounter > 10)
+	if(u32LoraPingPongOneMinTimerCounter > MAX_LORA_PING_TIMER_TIMEOUT)
 	{
 		u32LoraPingPongOneMinTimerCounter = 0;
 
-
 		App_vLoraWanInitTaskRun();
-		App_vLoraWanTimerStart(MAX_LORA_WAN_TIMEOUT);
 
 		App_vLoraPingPongTimerStop();
+		App_vLoraWanTimerStart();
+
+	}
+	else
+	{
+		TimerStart( &LoraPingPongTimerId );
 	}
 }
 
 void App_vLoraWanTimerHandler(void)
 {
-	if(App_eLoraModuleSelectorModeGet() == LORA_MODULE_PING_PONG)
+	u32LoraWanTimerCounter++;
+	if( u32LoraWanTimerCounter > MAX_LORA_WAN_TIMER_TIMEOUT)
 	{
-		App_vLoraPingPongInitTaskRun();
+		u32LoraWanTimerCounter = 0;
+		if(App_eLoraModuleSelectorModeGet() == LORA_MODULE_PING_PONG)
+		{
+			App_vLoraPingPongInitTaskRun();
 
-		App_vLoraPingPongTimerStart(MAX_LORA_PING_PONG_TIMEOUT);
+			App_vLoraWanTimerStop();
+			App_vLoraPingPongTimerStart();
+		}
+	}
+	else
+	{
+		TimerStart( &LoraWanTimerId );
 	}
 }
 
 void App_vLoraTimeoutTimerCreate(void)
 {
-	HW_TS_Create(CFG_TIM_PROC_ID_ISR, &(u8LoraPingPongTimerId), hw_ts_Repeated, App_vLoraPingPongTimerHandler);
-	HW_TS_Create(CFG_TIM_PROC_ID_ISR, &(u8LoraWanTimerId), hw_ts_SingleShot, App_vLoraWanTimerHandler);
+	TimerInit( &LoraPingPongTimerId, App_vLoraPingPongTimerHandler );
+	TimerInit( &LoraWanTimerId, App_vLoraWanTimerHandler );
 }
 
-void App_vLoraPingPongTimerStart(uint32_t u32Timeout)
+void App_vLoraPingPongTimerStart(void)
 {
 	u32LoraPingPongOneMinTimerCounter = 0;
-	HW_TS_Start(u8LoraPingPongTimerId, u32Timeout);
+
+	TimerSetValue( &LoraPingPongTimerId, MAX_LORA_PING_TIMER_TIMEOUT_INTERVAL );
+	TimerStart( &LoraPingPongTimerId );
+
 }
 
 void App_vLoraPingPongTimerStop(void)
 {
-	HW_TS_Stop(u8LoraPingPongTimerId);
+	TimerStop( &LoraPingPongTimerId );
 }
 
-void App_vLoraWanTimerStart(uint32_t u32Timeout)
+void App_vLoraWanTimerStart(void)
 {
 	u32LoraPingPongOneMinTimerCounter = 0;
-	HW_TS_Start(u8LoraWanTimerId, u32Timeout);
+	u32LoraWanTimerCounter = 0;
+
+	TimerSetValue( &LoraWanTimerId, MAX_LORA_WAN_TIMER_TIMEOUT_INTERVAL );
+	TimerStart( &LoraWanTimerId );
 }
 
 void App_vLoraWanTimerStop(void)
 {
-	HW_TS_Stop(u8LoraWanTimerId);
+	TimerStop( &LoraWanTimerId );
 }
 
 void App_vLoraWanInit(void)
@@ -248,7 +277,6 @@ eLoraModuleSelector_t App_eLoraModuleSelectorModeGet(void)
 
 void App_vLoraAppStateMachineRun(void)
 {
-
     switch(eLoraModuleSelector)
     {
     case LORA_MODULE_WAN_NETWORK:
@@ -264,7 +292,7 @@ void App_vLoraAppStateMachineRun(void)
     	App_vLoraPingPongPacketCounterClear();
 
     	App_vLoraPingPongInitTaskRun();
-    	App_vLoraPingPongTimerStart(MAX_LORA_PING_PONG_TIMEOUT);
+    	App_vLoraPingPongTimerStart();
     }
     break;
 

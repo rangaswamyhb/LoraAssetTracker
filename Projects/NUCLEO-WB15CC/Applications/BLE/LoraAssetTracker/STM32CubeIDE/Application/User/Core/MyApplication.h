@@ -11,15 +11,6 @@
 
 #include "stdint.h"
 
-#define MAX_BLE_TXRX_DATA   		(255u)
-#define MAX_BLE_ADV_DATA    		(10u)
-
-#define MAX_LORA_WAN_TIMEOUT 		(180*1000/CFG_TS_TICK_VAL) /**< 100s */
-#define MAX_LORA_PING_PONG_TIMEOUT 	(60*1000/CFG_TS_TICK_VAL) /**< 60s */
-
-#define DEFAULT_LORA_WAN_TIME		(1) /**< In Min */
-
-
 
 typedef enum
 {
@@ -28,6 +19,37 @@ typedef enum
 	LORA_MODULE_PING_PONG,
 	LORA_MODULE_MAX,
 }eLoraModuleSelector_t;
+
+
+
+
+
+
+#define APP_CONFIG_LORA_MODULE_SELECTOR					LORA_MODULE_WAN_NETWORK
+#define APP_CONFIG_LORA_IS_MASTER						FALSE
+#define APP_CONFIG_PING_PONG_TO_LWAN_SWITCH_TIMEOUT		(1u) /**< Units in Min */
+#define APP_CONFIG_LWAN_TO_PING_PONG_SWITCH_TIMEOUT		(1u) /**< Units in Min */
+
+
+
+
+
+
+#define MAX_BLE_TXRX_DATA   		(255u)
+#define MAX_BLE_ADV_DATA    		(10u)
+
+#define MAX_LORA_WAN_TIMER_TIMEOUT_INTERVAL 		(60000u) /**< 1s */
+#define MAX_LORA_PING_TIMER_TIMEOUT_INTERVAL    	(60000u) /**< 60s */
+
+#define MAX_LORA_PING_TIMER_TIMEOUT 				(APP_CONFIG_PING_PONG_TO_LWAN_SWITCH_TIMEOUT) /**< Units in Min */
+#define MAX_LORA_WAN_TIMER_TIMEOUT					(APP_CONFIG_LWAN_TO_PING_PONG_SWITCH_TIMEOUT) /**< Units in Min */
+
+#define DEFAULT_LORA_WAN_TIME		(1) /**< In Min */
+
+
+
+
+
 
 typedef enum
 {
@@ -150,9 +172,9 @@ void App_vLoraPingPongPacketCounterIncreament(void);
 uint8_t App_vLoraPingPongPacketCounterGet(void);
 
 void App_vLoraTimeoutTimerCreate(void);
-void App_vLoraPingPongTimerStart(uint32_t u32Timeout);
+void App_vLoraPingPongTimerStart(void);
 void App_vLoraPingPongTimerStop(void);
-void App_vLoraWanTimerStart(uint32_t u32Timeout);
+void App_vLoraWanTimerStart(void);
 void App_vLoraWanTimerStop(void);
 
 

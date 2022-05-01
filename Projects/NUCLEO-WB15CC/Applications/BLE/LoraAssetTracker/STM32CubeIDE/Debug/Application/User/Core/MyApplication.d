@@ -109,7 +109,8 @@ Application/User/Core/MyApplication.o: \
  ../../../../../../../Middlewares/ST/STM32_WPAN/ble/svc/Inc/svc_ctl.h \
  ../../../../../../../Middlewares/ST/STM32_WPAN/ble/svc/Inc/uuid.h \
  ../../STM32_WPAN/App/p2p_server_app.h \
- ../../../../../../../Utilities/sequencer/stm32_seq.h
+ ../../../../../../../Utilities/sequencer/stm32_seq.h \
+ ../Application/User/LoraModule/system/lr1110_timer.h
 
 ../Application/User/Core/MyApplication.h:
 
@@ -338,3 +339,5 @@ Application/User/Core/MyApplication.o: \
 ../../STM32_WPAN/App/p2p_server_app.h:
 
 ../../../../../../../Utilities/sequencer/stm32_seq.h:
+
+../Application/User/LoraModule/system/lr1110_timer.h:
