@@ -69,8 +69,9 @@ size_t __write(int handle, const unsigned char * buf, size_t bufSize);
  */
 #if (( CFG_DEBUG_TRACE_FULL != 0 ) || ( CFG_DEBUG_TRACE_LIGHT != 0 ))
 #if (DBG_TRACE_USE_CIRCULAR_QUEUE != 0)
-static queue_t MsgDbgTraceQueue;
-static uint8_t MsgDbgTraceQueueBuff[DBG_TRACE_MSG_QUEUE_SIZE];
+PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static queue_t MsgDbgTraceQueue;
+PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t MsgDbgTraceQueueBuff[DBG_TRACE_MSG_QUEUE_SIZE];;
+//static uint8_t MsgDbgTraceQueueBuff[DBG_TRACE_MSG_QUEUE_SIZE];
 #endif
 __IO ITStatus DbgTracePeripheralReady = SET;
 #endif

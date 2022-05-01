@@ -219,7 +219,7 @@ void P2PS_STM_Init(void)
     COPY_P2P_WRITE_CHAR_UUID(uuid16.Char_UUID_128);
     aci_gatt_add_char(aPeerToPeerContext.PeerToPeerSvcHdle,
                       UUID_TYPE_128, &uuid16,
-                      2,                                   
+                      50,
                       CHAR_PROP_WRITE_WITHOUT_RESP|CHAR_PROP_READ,
                       ATTR_PERMISSION_NONE,
                       GATT_NOTIFY_ATTRIBUTE_WRITE, /* gattEvtMask */
@@ -233,7 +233,7 @@ void P2PS_STM_Init(void)
     COPY_P2P_NOTIFY_UUID(uuid16.Char_UUID_128);
     aci_gatt_add_char(aPeerToPeerContext.PeerToPeerSvcHdle,
                       UUID_TYPE_128, &uuid16,
-                      2,
+                      50,
                       CHAR_PROP_NOTIFY,
                       ATTR_PERMISSION_NONE,
                       GATT_NOTIFY_ATTRIBUTE_WRITE, /* gattEvtMask */
@@ -261,6 +261,36 @@ void P2PS_STM_Init(void)
   return;
 }
 
+tBleStatus P2PS_STM_App_Update_Char_With_Len(uint16_t UUID, uint8_t *pPayload, uint8_t len)
+{
+  tBleStatus result = BLE_STATUS_INVALID_PARAMS;
+  switch(UUID)
+  {
+    case P2P_NOTIFY_CHAR_UUID:
+
+     result = aci_gatt_update_char_value(aPeerToPeerContext.PeerToPeerSvcHdle,
+                             aPeerToPeerContext.P2PNotifyServerToClientCharHdle,
+                              0, /* charValOffset */
+                             len, /* charValueLen */
+                             (uint8_t *)  pPayload);
+
+      break;
+
+    case P2P_WRITE_CHAR_UUID:
+        result = aci_gatt_update_char_value(aPeerToPeerContext.PeerToPeerSvcHdle,
+                                aPeerToPeerContext.P2PWriteClientToServerCharHdle,
+                                 0, /* charValOffset */
+                                len, /* charValueLen */
+                                (uint8_t *)  pPayload);
+        break;
+
+    default:
+      break;
+  }
+
+  return result;
+}
+
 /**
  * @brief  Characteristic update
  * @param  UUID: UUID of the characteristic
@@ -277,10 +307,18 @@ tBleStatus P2PS_STM_App_Update_Char(uint16_t UUID, uint8_t *pPayload)
      result = aci_gatt_update_char_value(aPeerToPeerContext.PeerToPeerSvcHdle,
                              aPeerToPeerContext.P2PNotifyServerToClientCharHdle,
                               0, /* charValOffset */
-                             2, /* charValueLen */
+                             20, /* charValueLen */
                              (uint8_t *)  pPayload);
     
       break;
+
+    case P2P_WRITE_CHAR_UUID:
+        result = aci_gatt_update_char_value(aPeerToPeerContext.PeerToPeerSvcHdle,
+                                aPeerToPeerContext.P2PWriteClientToServerCharHdle,
+                                 0, /* charValOffset */
+                                30, /* charValueLen */
+                                (uint8_t *)  pPayload);
+        break;
 
     default:
       break;
