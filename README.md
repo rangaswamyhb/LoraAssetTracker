@@ -8,7 +8,7 @@
 
 Firmware version and discription mentioned below:
 
-## Verion 0.0.6
+## Verion 0.0.1
 - Wifi working and written the test code
 - PING PONG
 - LORAWAN 
