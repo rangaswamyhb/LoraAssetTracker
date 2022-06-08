@@ -1,3 +1,0 @@
-adc-board.c:46:6:AdcMcuInit	0	static
-adc-board.c:62:6:AdcMcuConfig	0	static
-adc-board.c:81:10:AdcMcuReadChannel	0	static

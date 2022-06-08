@@ -1,5 +1,0 @@
-spi-board.c:83:6:SpiDeInit	24	static
-spi-board.c:93:6:SpiFormat	8	static
-spi-board.c:121:6:SpiFrequency	0	static
-spi-board.c:34:6:SpiInit	56	static
-spi-board.c:147:10:SpiInOut	32	static

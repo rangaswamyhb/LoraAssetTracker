@@ -1,9 +1,0 @@
-lora_main.c:632:6:OnTxDone	8	static
-lora_main.c:656:6:OnTxTimeout	8	static
-lora_main.c:663:6:OnRxTimeout	8	static
-lora_main.c:670:6:OnRxError	8	static
-lora_main.c:174:13:OnPingPongTxNextPacketTimerEvent	8	static
-lora_main.c:639:6:OnRxDone	32	static
-lora_main.c:188:6:lorapingpong_init	72	static
-lora_main.c:272:6:lorapingpong_process	72	static
-lora_main.c:415:5:lora_ping_pong	80	static

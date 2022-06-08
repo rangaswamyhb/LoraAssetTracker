@@ -1,6 +1,0 @@
-wifi_scan.c:537:13:on_wifi_scan_timeout_event	0	static
-wifi_scan.c:175:6:lr1110_modem_wifi_scan_done	0	static
-wifi_scan.c:192:20:wifi_execute_scan	1136	static
-wifi_scan.c:338:6:lr1110_wifi_scan_select_results	16	static
-wifi_scan.c:385:6:lr1110_modem_display_wifi_scan_results	48	static
-wifi_scan.c:657:7:app_wifi_scan	32	static

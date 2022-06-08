@@ -1,8 +1,0 @@
-eeprom-board.c:37:6:EepromMcuInit	0	static
-eeprom-board.c:94:6:EepromMcuIsErasingOnGoing	0	static
-eeprom-board.c:99:13:EepromMcuWriteBuffer	0	static
-eeprom-board.c:136:13:EepromMcuReadBuffer	8	static
-eeprom-board.c:157:6:EepromMcuSetDeviceAddr	0	static
-eeprom-board.c:162:13:EepromMcuGetDeviceAddr	8	static
-eeprom-board.c:177:6:HAL_FLASH_EndOfOperationCallback	0	static
-eeprom-board.c:191:6:EE_EndOfCleanup_UserCallback	0	static

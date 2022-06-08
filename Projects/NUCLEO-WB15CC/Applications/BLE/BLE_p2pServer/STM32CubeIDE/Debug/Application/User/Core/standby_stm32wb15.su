@@ -1,3 +1,0 @@
-standby_stm32wb15.c:77:6:standby_hw_save	0	static
-standby_stm32wb15.c:92:6:standby_hw_restore	8	static
-standby_stm32wb15.c:143:10:standby_boot_mng	8	static,ignoring_inline_asm
